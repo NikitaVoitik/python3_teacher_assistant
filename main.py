@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from configfile import apikey
 from llm_api import LLMClient
 
 class MyFlaskApp:
     def __init__(self):
         self.app = Flask(__name__)
-        self.llm_client = LLMClient(api_key='s0bCxiZAttwKRcBbqdyHhLxpjUjRDZWO', model='mistral-large-latest')
+        self.llm_client = LLMClient(api_key=apikey, model='mistral-large-latest')
         self.setup_routes()
 
     def setup_routes(self):
