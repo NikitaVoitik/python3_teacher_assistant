@@ -12,26 +12,32 @@
         <div class="chat-window" id="chat-window">
         </div>
         <div class="input-container">
+            <button class="icon-button" onclick="resetHistory()">
+                <img src="{{ url_for('static', filename='logos/reset.svg') }}" alt="Reset" class="icon">
+            </button>
             <textarea id="user-input" placeholder="Type your message here..." oninput="autoGrow(this)"></textarea>
             <div class="dropdown">
-                <button class="dropbtn">Mode</button>
+                <button class="dropbtn">
+                    <img src="{{ url_for('static', filename='logos/methods.svg') }}" alt="Modes" class="icon" id="mode-icon">
+                </button>
                 <div class="dropdown-content">
-                    <a href="#" onclick="setMode('Socratic Approach')">Socratic Approach</a>
-                    <a href="#" onclick="setMode('Error Finding')">Error Finding</a>
-                    <a href="#" onclick="setMode('Homework Checker')">Homework Checker</a>
-                </div>
+                    <a href="#" onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">Socratic Approach</a>
+                    <a href="#" onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error Finding</a>
+                    <a href="#" onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework Checker</a>
+                                    </div>
             </div>
-            <button onclick="sendMessage()">Send</button>
-            <button onclick="resetHistory()">Reset</button>
+            <button class="icon-button" onclick="sendMessage()">
+                <img src="{{ url_for('static', filename='logos/send.svg') }}" alt="Send" class="icon">
+            </button>
         </div>
     </div>
 
     <script>
         let currentMode = 'Socratic Approach';
 
-        function setMode(mode) {
+        function setMode(mode, iconUrl) {
             currentMode = mode;
-            document.querySelector('.dropbtn').textContent = mode;
+            document.getElementById('mode-icon').src = iconUrl;
         }
 
         document.getElementById('user-input').addEventListener('keydown', function(event) {
