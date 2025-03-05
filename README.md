@@ -37,7 +37,7 @@ Contributions are welcome! Feel free to submit issues or pull requests.
 
 ## Author
 
-Developed by
-[Uladzislau Bolbas](https://github.com/b0lbas)
+Developed by\n
+[Uladzislau Bolbas](https://github.com/b0lbas)\n
 [Nikita Voitik](https://github.com/NikitaVoitik).
 
