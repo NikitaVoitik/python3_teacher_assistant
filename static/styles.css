@@ -126,22 +126,33 @@ body {
     display: block;
 }
 
+.message-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.message-container.user {
+    justify-content: flex-end;
+}
+
 .user-message, .llm-response {
     padding: 10px 15px;
     border-radius: 20px;
     margin-bottom: 10px;
     max-width: 80%;
     word-wrap: break-word;
+    display: inline-block; /* Ensure each message box takes up only the necessary width */
 }
 
 .user-message {
     background-color: #007acc; /* VS Code blue color */
     color: #ffffff;
-    align-self: flex-end;
+    text-align: right; /* Align text to the right */
 }
 
 .llm-response {
     background-color: #3c3c3c; /* VS Code dark gray color */
     color: #d4d4d4; /* VS Code text color */
-    align-self: flex-start;
+    text-align: left; /* Align text to the left */
 }

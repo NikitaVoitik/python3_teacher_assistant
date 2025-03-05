@@ -24,7 +24,7 @@
                     <a href="#" onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">Socratic Approach</a>
                     <a href="#" onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error Finding</a>
                     <a href="#" onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework Checker</a>
-                                    </div>
+                </div>
             </div>
             <button class="icon-button" onclick="sendMessage()">
                 <img src="{{ url_for('static', filename='logos/send.svg') }}" alt="Send" class="icon">
@@ -52,10 +52,13 @@
             if (userInput === '') return;
 
             const chatWindow = document.getElementById('chat-window');
+            const userMessageContainer = document.createElement('div');
+            userMessageContainer.className = 'message-container user';
             const userMessage = document.createElement('div');
             userMessage.className = 'user-message';
             userMessage.textContent = userInput;
-            chatWindow.appendChild(userMessage);
+            userMessageContainer.appendChild(userMessage);
+            chatWindow.appendChild(userMessageContainer);
 
             fetch('/ask', {
                 method: 'POST',
@@ -66,10 +69,13 @@
             })
             .then(response => response.json())
             .then(data => {
+                const llmMessageContainer = document.createElement('div');
+                llmMessageContainer.className = 'message-container';
                 const llmResponse = document.createElement('div');
                 llmResponse.className = 'llm-response';
                 llmResponse.innerHTML = formatResponse(data.response);
-                chatWindow.appendChild(llmResponse);
+                llmMessageContainer.appendChild(llmResponse);
+                chatWindow.appendChild(llmMessageContainer);
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             });
 
