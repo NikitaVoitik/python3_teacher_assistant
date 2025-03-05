@@ -2,7 +2,7 @@
 
 ![Python3 Teacher Assistant](https://img.shields.io/badge/Python-3.x-blue)
 
-<img align="right" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHFnamx0cDRzanpnYW5vNzNnMHZxeDN1cnRianR3NHAyYnptNnMzZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PzrPi0UVzgYHm/giphy.gif" width='250'/>
+<img align="right" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHFnamx0cDRzanpnYW5vNzNnMHZxeDN1cnRianR3NHAyYnptNnMzZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/PzrPi0UVzgYHm/giphy.gif" width='200'/>
 
 **Python3 Teacher Assistant** is a tool designed to help students learn Python effectively. It incorporates the Socratic method, a homework checker, and an error finder to enhance the learning experience.
 
