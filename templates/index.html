@@ -11,15 +11,42 @@
         <div class="chat-window" id="chat-window">
         </div>
         <div class="input-container">
-            <input type="text" id="user-input" placeholder="Type your message here...">
+            <textarea id="user-input" placeholder="Type your message here..." oninput="autoGrow(this)"></textarea>
+            <div class="dropdown">
+                <button class="dropbtn">Mode</button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="setMode('Socratic Approach')">Socratic Approach</a>
+                    <a href="#" onclick="setMode('Error Finding')">Error Finding</a>
+                    <a href="#" onclick="setMode('Homework Checker')">Homework Checker</a>
+                </div>
+            </div>
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
+        let currentMode = 'Socratic Approach';
+        const systemPrompts = {
+            'Socratic Approach': 'You are a helpful assistant using the Socratic method to guide users to their own conclusions.',
+            'Error Finding': 'You are an expert at finding and explaining errors in code.',
+            'Homework Checker': 'You are a diligent homework checker, providing feedback and corrections.'
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelector('.dropbtn').textContent = mode;
+        }
+
+        document.getElementById('user-input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
         function sendMessage() {
-            const userInput = document.getElementById('user-input').value;
-            if (userInput.trim() === '') return;
+            const userInput = document.getElementById('user-input').value.trim();
+            if (userInput === '') return;
 
             const chatWindow = document.getElementById('chat-window');
             const userMessage = document.createElement('div');
@@ -27,13 +54,37 @@
             userMessage.textContent = userInput;
             chatWindow.appendChild(userMessage);
 
-            const llmResponse = document.createElement('div');
-            llmResponse.className = 'llm-response';
-            llmResponse.textContent = 'This is a simulated response from the LLM.';
-            chatWindow.appendChild(llmResponse);
+            fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userInput, mode: currentMode, systemPrompt: systemPrompts[currentMode] })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const llmResponse = document.createElement('div');
+                llmResponse.className = 'llm-response';
+                llmResponse.innerHTML = formatResponse(data.response);
+                chatWindow.appendChild(llmResponse);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            });
 
             document.getElementById('user-input').value = '';
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+            document.getElementById('user-input').style.height = 'auto'; // Reset height
+        }
+
+        function autoGrow(element) {
+            element.style.height = 'auto';
+            element.style.height = (element.scrollHeight) + 'px';
+        }
+
+        function formatResponse(response) {
+            // Replace **text** with <b>text</b>
+            response = response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            // Replace \n with <br>
+            response = response.replace(/\n/g, '<br>');
+            return response;
         }
     </script>
 </body>
