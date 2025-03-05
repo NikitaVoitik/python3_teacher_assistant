@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat with LLM</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='prompts.js') }}"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -21,16 +22,12 @@
                 </div>
             </div>
             <button onclick="sendMessage()">Send</button>
+            <button onclick="resetHistory()">Reset</button>
         </div>
     </div>
 
     <script>
         let currentMode = 'Socratic Approach';
-        const systemPrompts = {
-            'Socratic Approach': 'You are a helpful assistant using the Socratic method to guide users to their own conclusions.',
-            'Error Finding': 'You are an expert at finding and explaining errors in code.',
-            'Homework Checker': 'You are a diligent homework checker, providing feedback and corrections.'
-        };
 
         function setMode(mode) {
             currentMode = mode;
@@ -72,6 +69,16 @@
 
             document.getElementById('user-input').value = '';
             document.getElementById('user-input').style.height = 'auto'; // Reset height
+        }
+
+        function resetHistory() {
+            fetch('/reset', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.status);
+            });
         }
 
         function autoGrow(element) {

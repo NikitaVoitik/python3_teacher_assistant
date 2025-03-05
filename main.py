@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-from llm_api import LLMClient
 from configfile import apikey
+from llm_api import LLMClient
 
 class MyFlaskApp:
     def __init__(self):
@@ -20,6 +20,11 @@ class MyFlaskApp:
             system_prompt = data.get('systemPrompt')
             response = self.llm_client.get_response(user_input, system_prompt)
             return jsonify({'response': response})
+
+        @self.app.route('/reset', methods=['POST'])
+        def reset():
+            self.llm_client.reset_history()
+            return jsonify({'status': 'history reset'})
 
     def run(self):
         self.app.run(debug=True)
