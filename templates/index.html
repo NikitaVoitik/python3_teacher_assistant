@@ -93,6 +93,9 @@
         messages.forEach(message => {
             message.remove();
         });
+        fetch('/reset', {
+            method: 'POST'
+        });
     }
 
     function autoGrow(element) {
