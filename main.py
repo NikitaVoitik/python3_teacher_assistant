@@ -35,7 +35,8 @@ class MyFlaskApp:
             file_upload = request.files['file']
             if file_upload:
                 file_content = file_upload.read().decode('utf-8')
-                self.llm_client.add_message(file_content)
+                filename = file_upload.filename
+                self.llm_client.add_file(filename, file_content)
                 return jsonify({'status': 'ok'})
             return jsonify({'status': 'not ok'})
 

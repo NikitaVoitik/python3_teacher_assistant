@@ -104,7 +104,7 @@ body {
     position: absolute;
     background-color: #1e1e1e; /* VS Code background color */
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 4px;
     bottom: 100%; /* Position the dropdown content above the button */
@@ -192,4 +192,26 @@ body {
     100% {
         transform: translateY(0);
     }
+}
+
+.drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.drop-area.highlight {
+    background-color: #e0f7fa;
+    border-color: #00acc1;
+}
+
+.file-info {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #666;
 }

@@ -17,6 +17,10 @@ class LLMClient:
         self.chat_history.append({"role": "assistant", "content": response_content})
         return response_content
 
+    def add_file(self, file_name, file_content):
+        prefix = f"Filename: {file_name}\nFile Content:\n"
+        self.chat_history.append({"role": "user", "content": prefix + file_content})
+
     def add_message(self, message):
         self.chat_history.append({"role": "user", "content": message})
 
