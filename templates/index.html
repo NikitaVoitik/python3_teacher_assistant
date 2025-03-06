@@ -52,6 +52,7 @@
             const userInput = document.getElementById('user-input').value.trim();
             if (userInput === '') return;
 
+<<<<<<< Updated upstream
             const chatWindow = document.getElementById('chat-window');
             const userMessageContainer = document.createElement('div');
             userMessageContainer.className = 'message-container user';
@@ -68,8 +69,24 @@
                 },
                 body: JSON.stringify({ message: userInput, mode: currentMode, systemPrompt: systemPrompts[currentMode] })
             })
+=======
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        chatWindow.appendChild(typingIndicator);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        fetch('/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({message: userInput, prompt_type: currentMode})
+        })
+>>>>>>> Stashed changes
             .then(response => response.json())
             .then(data => {
+                chatWindow.removeChild(typingIndicator);
                 const llmMessageContainer = document.createElement('div');
                 llmMessageContainer.className = 'message-container';
                 const llmResponse = document.createElement('div');
