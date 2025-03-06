@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-from configfile import apikey, prompts
+from configfile import apikey
+from params import prompts
 from llm_api import LLMClient
 
 
