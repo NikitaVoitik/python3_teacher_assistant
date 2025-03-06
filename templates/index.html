@@ -89,13 +89,13 @@
     }
 
     function resetHistory() {
+        let messages = document.querySelectorAll('.message-container');
+        messages.forEach(message => {
+            message.remove();
+        });
         fetch('/reset', {
             method: 'POST'
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.status);
-            });
+        });
     }
 
     function autoGrow(element) {
