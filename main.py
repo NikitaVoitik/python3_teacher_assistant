@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from configfile import apikey
+from params import prompts
 from llm_api import LLMClient
+
 
 class MyFlaskApp:
     def __init__(self):
@@ -17,7 +19,9 @@ class MyFlaskApp:
         def ask():
             data = request.json
             user_input = data.get('message')
-            system_prompt = data.get('systemPrompt')
+            prompt_type = data.get('prompt_type')
+            system_prompt = prompts.get(prompt_type)
+
             response = self.llm_client.get_response(user_input, system_prompt)
             return jsonify({'response': response})
 
@@ -28,6 +32,7 @@ class MyFlaskApp:
 
     def run(self):
         self.app.run(debug=True)
+
 
 if __name__ == '__main__':
     app_instance = MyFlaskApp()

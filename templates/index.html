@@ -6,70 +6,66 @@
     <title>Helper</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='logos/logo.svg') }}">
-    <script src="{{ url_for('static', filename='prompts.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-window" id="chat-window">
-        </div>
-        <div class="input-container">
-            <button class="icon-button" onclick="resetHistory()">
-                <img src="{{ url_for('static', filename='logos/reset.svg') }}" alt="Reset" class="icon">
-            </button>
-            <textarea id="user-input" placeholder="Type your message here..." oninput="autoGrow(this)"></textarea>
-            <div class="dropdown">
-                <button class="dropbtn">
-                    <img src="{{ url_for('static', filename='logos/methods.svg') }}" alt="Modes" class="icon" id="mode-icon">
-                </button>
-                <div class="dropdown-content">
-                    <a href="#" onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">Socratic Approach</a>
-                    <a href="#" onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error Finding</a>
-                    <a href="#" onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework Checker</a>
-                </div>
-            </div>
-            <button class="icon-button" onclick="sendMessage()">
-                <img src="{{ url_for('static', filename='logos/send.svg') }}" alt="Send" class="icon">
-            </button>
-        </div>
+<div class="chat-container">
+    <div class="chat-window" id="chat-window">
     </div>
+    <div class="input-container">
+        <button class="icon-button" onclick="resetHistory()">
+            <img src="{{ url_for('static', filename='logos/reset.svg') }}" alt="Reset" class="icon">
+        </button>
+        <textarea id="user-input" placeholder="Type your message here..." oninput="autoGrow(this)"></textarea>
+        <div class="dropdown">
+            <button class="dropbtn">
+                <img src="{{ url_for('static', filename='logos/methods.svg') }}" alt="Modes" class="icon"
+                     id="mode-icon">
+            </button>
+            <div class="dropdown-content">
+                <a href="#"
+                   onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">Socratic
+                    Approach</a>
+                <a href="#" onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error
+                    Finding</a>
+                <a href="#" onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework
+                    Checker</a>
+            </div>
+        </div>
+        <button class="icon-button" onclick="sendMessage()">
+            <img src="{{ url_for('static', filename='logos/send.svg') }}" alt="Send" class="icon">
+        </button>
+    </div>
+</div>
 
-    <script>
-        let currentMode = 'Socratic Approach';
+<script>
+    let currentMode = 'Socratic Approach';
 
-        function setMode(mode, iconUrl) {
-            currentMode = mode;
-            document.getElementById('mode-icon').src = iconUrl;
+    function setMode(mode, iconUrl) {
+        currentMode = mode;
+        document.getElementById('mode-icon').src = iconUrl;
+    }
+
+    document.getElementById('user-input').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
+    });
 
-        document.getElementById('user-input').addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
+    function sendMessage() {
+        const userInput = document.getElementById('user-input').value.trim();
+        if (userInput === '') return;
 
-        function sendMessage() {
-            const userInput = document.getElementById('user-input').value.trim();
-            if (userInput === '') return;
+        const chatWindow = document.getElementById('chat-window');
+        const userMessageContainer = document.createElement('div');
+        userMessageContainer.className = 'message-container user';
+        const userMessage = document.createElement('div');
+        userMessage.className = 'user-message';
+        userMessage.textContent = userInput;
+        userMessageContainer.appendChild(userMessage);
+        chatWindow.appendChild(userMessageContainer);
 
-<<<<<<< Updated upstream
-            const chatWindow = document.getElementById('chat-window');
-            const userMessageContainer = document.createElement('div');
-            userMessageContainer.className = 'message-container user';
-            const userMessage = document.createElement('div');
-            userMessage.className = 'user-message';
-            userMessage.textContent = userInput;
-            userMessageContainer.appendChild(userMessage);
-            chatWindow.appendChild(userMessageContainer);
-
-            fetch('/ask', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message: userInput, mode: currentMode, systemPrompt: systemPrompts[currentMode] })
-            })
-=======
         const typingIndicator = document.createElement('div');
         typingIndicator.className = 'typing-indicator';
         typingIndicator.innerHTML = '<span></span><span></span><span></span>';
@@ -83,7 +79,6 @@
             },
             body: JSON.stringify({message: userInput, prompt_type: currentMode})
         })
->>>>>>> Stashed changes
             .then(response => response.json())
             .then(data => {
                 chatWindow.removeChild(typingIndicator);
@@ -97,32 +92,32 @@
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             });
 
-            document.getElementById('user-input').value = '';
-            document.getElementById('user-input').style.height = 'auto'; // Reset height
-        }
+        document.getElementById('user-input').value = '';
+        document.getElementById('user-input').style.height = 'auto'; // Reset height
+    }
 
-        function resetHistory() {
-            fetch('/reset', {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.status);
-            });
-        }
+    function resetHistory() {
+        let messages = document.querySelectorAll('.message-container');
+        messages.forEach(message => {
+            message.remove();
+        });
+        fetch('/reset', {
+            method: 'POST'
+        });
+    }
 
-        function autoGrow(element) {
-            element.style.height = 'auto';
-            element.style.height = (element.scrollHeight) + 'px';
-        }
+    function autoGrow(element) {
+        element.style.height = 'auto';
+        element.style.height = (element.scrollHeight) + 'px';
+    }
 
-        function formatResponse(response) {
-            // Replace **text** with <b>text</b>
-            response = response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            // Replace \n with <br>
-            response = response.replace(/\n/g, '<br>');
-            return response;
-        }
-    </script>
+    function formatResponse(response) {
+        // Replace **text** with <b>text</b>
+        response = response.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        // Replace \n with <br>
+        response = response.replace(/\n/g, '<br>');
+        return response;
+    }
+</script>
 </body>
 </html>
