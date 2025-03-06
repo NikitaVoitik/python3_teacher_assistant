@@ -1,5 +1,6 @@
 from mistralai import Mistral
 
+
 class LLMClient:
     def __init__(self, api_key, model):
         self.mistral_client = Mistral(api_key=api_key)
