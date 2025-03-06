@@ -17,5 +17,8 @@ class LLMClient:
         self.chat_history.append({"role": "assistant", "content": response_content})
         return response_content
 
+    def add_message(self, message):
+        self.chat_history.append({"role": "user", "content": message})
+
     def reset_history(self):
         self.chat_history = []

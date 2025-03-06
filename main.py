@@ -30,6 +30,15 @@ class MyFlaskApp:
             self.llm_client.reset_history()
             return jsonify({'status': 'history reset'})
 
+        @self.app.route('/file', methods=['POST'])
+        def file():
+            file_upload = request.files['file']
+            if file_upload:
+                file_content = file_upload.read().decode('utf-8')
+                self.llm_client.add_message(file_content)
+                return jsonify({'status': 'ok'})
+            return jsonify({'status': 'not ok'})
+
     def run(self):
         self.app.run(debug=True)
 
