@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Helper</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='logos/logo.svg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -65,6 +66,12 @@
         userMessageContainer.appendChild(userMessage);
         chatWindow.appendChild(userMessageContainer);
 
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        chatWindow.appendChild(typingIndicator);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
         fetch('/ask', {
             method: 'POST',
             headers: {
@@ -74,6 +81,7 @@
         })
             .then(response => response.json())
             .then(data => {
+                chatWindow.removeChild(typingIndicator);
                 const llmMessageContainer = document.createElement('div');
                 llmMessageContainer.className = 'message-container';
                 const llmResponse = document.createElement('div');
