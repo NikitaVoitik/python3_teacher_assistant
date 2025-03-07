@@ -152,21 +152,35 @@ function uploadFile(file) {
     uploadStatus.textContent = `Uploading ${file.name}...`;
     fileInfo.appendChild(uploadStatus);
 
+    // Show loading indicator
+    const loadingIndicator = document.getElementById('upload-loading');
+    loadingIndicator.style.display = 'flex';
+
     fetch('/file', {
-        method: 'POST', body: formData
+        method: 'POST',
+        body: formData
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                uploadStatus.textContent = `File ${file.name} uploaded successfully.`;
-                displayFileMessage(file.name);
-            } else {
-                uploadStatus.textContent = `File ${file.name} upload failed.`;
-            }
-        })
-        .catch(error => {
-            uploadStatus.textContent = `Error uploading file ${file.name}: ${error}`;
-        });
+    .then(response => response.json())
+    .then(data => {
+        // Hide loading indicator
+        loadingIndicator.style.display = 'none';
+
+        if (data.status === 'ok') {
+            uploadStatus.textContent = `File ${file.name} uploaded successfully.`;
+            uploadStatus.className = 'upload-success';
+            displayFileMessage(file.name);
+        } else {
+            uploadStatus.textContent = `Error: ${data.message || 'File upload failed'}`;
+            uploadStatus.className = 'upload-error';
+        }
+    })
+    .catch(error => {
+        // Hide loading indicator
+        loadingIndicator.style.display = 'none';
+
+        uploadStatus.textContent = `Error uploading file ${file.name}: ${error}`;
+        uploadStatus.className = 'upload-error';
+    });
 }
 
 function displayFileMessage(fileName) {

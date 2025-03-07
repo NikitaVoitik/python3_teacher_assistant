@@ -32,11 +32,13 @@
             </button>
             <div class="dropdown-content">
                 <a href="#"
-                   onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">Socratic
+                   onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg')|safe }}')">Socratic
                     Approach</a>
-                <a href="#" onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error
+                <a href="#"
+                   onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg')|safe }}')">Error
                     Finding</a>
-                <a href="#" onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework
+                <a href="#"
+                   onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg')|safe }}')">Homework
                     Checker</a>
             </div>
         </div>
@@ -50,16 +52,23 @@
 <div class="modal" id="mode-modal">
     <div class="modal-content">
         <h2>Select Mode</h2>
-        <button onclick="selectMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg') }}')">
+        <button onclick="selectMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg')|safe }}')">
             Socratic Approach
         </button>
-        <button onclick="selectMode('Error Finding', '{{ url_for('static', filename='logos/error.svg') }}')">Error
+        <button onclick="selectMode('Error Finding', '{{ url_for('static', filename='logos/error.svg')|safe }}')">Error
             Finding
         </button>
-        <button onclick="selectMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg') }}')">Homework
+        <button onclick="selectMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg')|safe }}')">
+            Homework
             Checker
         </button>
     </div>
+</div>
+
+<!-- Upload loading indicator -->
+<div class="upload-loading" id="upload-loading">
+    <div class="spinner"></div>
+    <p>Uploading file...</p>
 </div>
 </body>
 </html>
