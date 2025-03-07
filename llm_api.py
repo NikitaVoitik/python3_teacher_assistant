@@ -22,6 +22,23 @@ class LLMClient:
         prefix = f"Filename: {file_name}\nFile Content:\n"
         self.chat_history.append({"role": "user", "content": prefix + file_content})
 
+    def add_image(self, image):
+        if self.model != "pixtral-large-latest":
+            self.model = "pixtral-large-latest"
+        if isinstance(image, bytes):
+            image = image.decode('utf-8')
+        self.chat_history.append({
+            "role": "user",
+            "content": [
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{image}"
+                    }
+                }
+            ]
+        })
+
     def add_message(self, message):
         self.chat_history.append({"role": "user", "content": message})
 
