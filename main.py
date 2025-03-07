@@ -1,7 +1,10 @@
+import os
+
 from PyPDF2 import PdfReader
 from flask import Flask, render_template, request, jsonify
 
-from configfile import apikey
+from configfile import mistral_apikey
+from image_to_text import RapidAPITextExtractor
 from llm_api import LLMClient
 from params import prompts
 
@@ -9,7 +12,7 @@ from params import prompts
 class MyFlaskApp:
     def __init__(self):
         self.app = Flask(__name__)
-        self.llm_client = LLMClient(api_key=apikey, model='mistral-large-latest')
+        self.llm_client = LLMClient(api_key=mistral_apikey, model='mistral-large-latest')
         self.setup_routes()
 
     def setup_routes(self):
@@ -39,12 +42,27 @@ class MyFlaskApp:
                 filename = file_upload.filename
                 content = ""
 
-                if filename.lower().endswith('.pdf'):
+                image_extensions = ['.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.gif', '.webp']
+                is_image = any(filename.lower().endswith(ext) for ext in image_extensions)
+                if is_image:
+                    try:
+                        temp_image_path = f"temp_{filename}"
+                        file_upload.save(temp_image_path)
+
+                        ocr_service = RapidAPITextExtractor()
+                        content = ocr_service.extract_text_from_image(temp_image_path)
+                        os.remove(temp_image_path)
+
+                        if not content.strip():
+                            content = "[Image with no extractable text]"
+
+                    except Exception as e:
+                        return jsonify({'status': 'error', 'message': f'Error processing image: {str(e)}'})
+                elif filename.lower().endswith('.pdf'):
                     try:
                         pdf = PdfReader(file_upload)
                         for page in pdf.pages:
                             content += page.extract_text() + "\n"
-                        print(content)
                     except Exception as e:
                         return jsonify({'status': 'error', 'message': f'Error reading PDF: {str(e)}'})
                 else:
@@ -53,6 +71,7 @@ class MyFlaskApp:
                     except UnicodeDecodeError:
                         return jsonify({'status': 'error', 'message': 'File encoding not supported'})
 
+                print(content)
                 self.llm_client.add_file(filename, content)
                 return jsonify({'status': 'ok'})
             return jsonify({'status': 'not ok'})
