@@ -7,44 +7,56 @@
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='logos/logo.svg') }}" rel="icon">
     <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-window" id="chat-window">
+<div class="container">
+    <div class="sidebar">
+        <h2>HarbourGPT</h2>
+        <ul id="chat-list">
+            <!-- Chat items will be dynamically added here -->
+        </ul>
+        <button class="new-chat-button" onclick="createNewChat()">+ New Chat</button>
     </div>
+    <div class="main-content">
+        <div class="chat-container">
+            <div class="chat-window" id="chat-window">
+            </div>
 
-    <!-- Drag and drop area -->
-    <div class="drop-area" id="drop-area">
-        <p>Drag & drop files here or click to upload</p>
-        <input id="fileInput" style="display: none;" type="file">
-        <div class="file-info" id="file-info"></div>
-    </div>
+            <!-- Drag and drop area -->
+            <div class="drop-area" id="drop-area">
+                <p>Drag & drop files here or click to upload</p>
+                <input id="fileInput" style="display: none;" type="file">
+                <div class="file-info" id="file-info"></div>
+            </div>
 
-    <div class="input-container">
-        <button class="icon-button" onclick="resetHistory()">
-            <img alt="Reset" class="icon" src="{{ url_for('static', filename='logos/reset.svg') }}">
-        </button>
-        <textarea id="user-input" oninput="autoGrow(this)" placeholder="Type your message here..."></textarea>
-        <div class="dropdown">
-            <button class="dropbtn">
-                <img alt="Modes" class="icon" id="mode-icon"
-                     src="{{ url_for('static', filename='logos/methods.svg') }}">
-            </button>
-            <div class="dropdown-content">
-                <a href="#"
-                   onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg')|safe }}')">Socratic
-                    Approach</a>
-                <a href="#"
-                   onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg')|safe }}')">Error
-                    Finding</a>
-                <a href="#"
-                   onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg')|safe }}')">Homework
-                    Checker</a>
+            <div class="input-container">
+                <button class="icon-button" onclick="resetHistory()">
+                    <img alt="Reset" class="icon" src="{{ url_for('static', filename='logos/reset.svg') }}">
+                </button>
+                <textarea id="user-input" oninput="autoGrow(this)" placeholder="Type your message here..."></textarea>
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        <img alt="Modes" class="icon" id="mode-icon"
+                             src="{{ url_for('static', filename='logos/methods.svg') }}">
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#"
+                           onclick="setMode('Socratic Approach', '{{ url_for('static', filename='logos/socrates.svg')|safe }}')">Socratic
+                            Approach</a>
+                        <a href="#"
+                           onclick="setMode('Error Finding', '{{ url_for('static', filename='logos/error.svg')|safe }}')">Error
+                            Finding</a>
+                        <a href="#"
+                           onclick="setMode('Homework Checker', '{{ url_for('static', filename='logos/book.svg')|safe }}')">Homework
+                            Checker</a>
+                    </div>
+                </div>
+                <button class="icon-button" onclick="sendMessage()">
+                    <img alt="Send" class="icon" src="{{ url_for('static', filename='logos/send.svg') }}">
+                </button>
             </div>
         </div>
-        <button class="icon-button" onclick="sendMessage()">
-            <img alt="Send" class="icon" src="{{ url_for('static', filename='logos/send.svg') }}">
-        </button>
     </div>
 </div>
 

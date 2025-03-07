@@ -10,15 +10,77 @@ body {
     color: #d4d4d4; /* VS Code text color */
 }
 
-.chat-container {
+.container {
+    display: flex;
     width: 100%;
-    max-width: 600px;
-    height: 80vh; /* Set a fixed height for the chat container */
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
     background-color: #252526; /* VS Code editor background color */
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    color: #d4d4d4; /* VS Code text color */
+    margin-top: 0;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #3c3c3c; /* VS Code dark gray color */
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li:hover {
+    background-color: #007acc; /* VS Code blue color */
+}
+
+.sidebar ul li img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.new-chat-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007acc; /* VS Code blue color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.new-chat-button:hover {
+    background-color: #005f99; /* Darker blue */
+}
+
+.main-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #252526; /* VS Code editor background color */
+    border-radius: 8px;
     overflow: hidden;
 }
 
@@ -104,7 +166,7 @@ body {
     position: absolute;
     background-color: #1e1e1e; /* VS Code background color */
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 4px;
     bottom: 100%; /* Position the dropdown content above the button */
