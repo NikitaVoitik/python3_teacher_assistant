@@ -1,11 +1,22 @@
 let currentMode = 'Socratic Approach';
+let dragCounter = 0;
 
 function setMode(mode, iconUrl) {
     currentMode = mode;
     document.getElementById('mode-icon').src = iconUrl;
 }
 
+function selectMode(mode, iconUrl) {
+    setMode(mode, iconUrl);
+    document.getElementById('mode-modal').style.display = 'none';
+}
+
 function sendMessage() {
+    if (currentMode === '') {
+        alert('Please select a mode first.');
+        return;
+    }
+
     const userInput = document.getElementById('user-input').value.trim();
     if (userInput === '') return;
 
@@ -25,11 +36,9 @@ function sendMessage() {
     chatWindow.scrollTop = chatWindow.scrollHeight;
 
     fetch('/ask', {
-        method: 'POST',
-        headers: {
+        method: 'POST', headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({message: userInput, prompt_type: currentMode})
+        }, body: JSON.stringify({message: userInput, prompt_type: currentMode})
     })
         .then(response => response.json())
         .then(data => {
@@ -75,7 +84,6 @@ function formatResponse(response) {
 function initFileDragDrop() {
     const dropArea = document.getElementById('drop-area');
     const fileInput = document.getElementById('fileInput');
-    const fileInfo = document.getElementById('file-info');
 
     // Open file dialog when clicking on drop area
     dropArea.addEventListener('click', () => {
@@ -83,112 +91,101 @@ function initFileDragDrop() {
     });
 
     // Handle file selection from dialog
-    fileInput.addEventListener('change', handleFiles);
+    fileInput.addEventListener('change', handleFileSelect);
 
-    // Prevent default drag behaviors
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
+    // Global drag and drop events
+    window.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        dragCounter++;
+        dropArea.style.display = 'flex';
     });
 
-    // Highlight drop area when dragging over it
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
+    window.addEventListener('dragleave', (event) => {
+        event.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) {
+            dropArea.style.display = 'none';
+        }
     });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
+    window.addEventListener('dragover', (event) => {
+        event.preventDefault();
     });
 
-    // Handle dropped files
-    dropArea.addEventListener('drop', handleDrop, false);
+    window.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dragCounter = 0;
+        dropArea.style.display = 'none';
+        // Handle file drop
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+    });
 }
 
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-function highlight() {
-    document.getElementById('drop-area').classList.add('highlight');
-}
-
-function unhighlight() {
-    document.getElementById('drop-area').classList.remove('highlight');
-}
-
-function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
+function handleFileSelect(event) {
+    const files = event.target.files;
     handleFiles(files);
 }
 
-function handleFiles(e) {
-    const files = e.target ? e.target.files : e;
+function handleFiles(files) {
     const fileInfo = document.getElementById('file-info');
-
-    if (files.length === 0) return;
-
-    const file = files[0];
-
-    // Define allowed file types
-    const allowedTypes = [
-        'text/plain', 'text/html', 'text/css', 'text/javascript',
-        'application/json', 'application/xml', 'application/javascript',
-        'text/x-python', 'text/x-java', 'text/x-c', 'text/x-c++',
-        'text/markdown', 'text/x-typescript'
-    ];
-
-    // Check file extension as fallback
-    const validExtensions = ['.txt', '.js', '.py', '.html', '.css', '.json', '.xml',
-        '.md', '.ts', '.jsx', '.tsx', '.java', '.c', '.cpp',
-        '.h', '.cs', '.php', '.rb', '.go', '.rs', '.swift'];
-
-    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-
-    if (!allowedTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
-        fileInfo.textContent = `Error: Only text and code files are allowed`;
-        return;
+    fileInfo.innerHTML = '';
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileElement = document.createElement('div');
+        fileElement.textContent = `File: ${file.name}`;
+        fileInfo.appendChild(fileElement);
+        uploadFile(file);
     }
-
-    fileInfo.textContent = `File: ${file.name} (${formatFileSize(file.size)})`;
-    uploadFile(file);
 }
 
 function formatFileSize(bytes) {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / 1048576).toFixed(1) + ' MB';
+    if (bytes < 1024) return bytes + ' bytes'; else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'; else return (bytes / 1048576).toFixed(1) + ' MB';
 }
 
 function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
-    const fileInfo = document.getElementById('file-info');
 
-    const chatWindow = document.getElementById('chat-window');
-    const userMessageContainer = document.createElement('div');
-    userMessageContainer.className = 'message-container user';
-    const userMessage = document.createElement('div');
-    userMessage.className = 'user-message';
-    userMessage.textContent = `Uploaded file: ${file.name}`;
-    userMessageContainer.appendChild(userMessage);
-    chatWindow.appendChild(userMessageContainer);
+    const fileInfo = document.getElementById('file-info');
+    const uploadStatus = document.createElement('div');
+    uploadStatus.textContent = `Uploading ${file.name}...`;
+    fileInfo.appendChild(uploadStatus);
 
     fetch('/file', {
-        method: 'POST',
-        body: formData
+        method: 'POST', body: formData
     })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'ok') {
-                fileInfo.textContent = `File uploaded successfully: ${file.name}`;
+                uploadStatus.textContent = `File ${file.name} uploaded successfully.`;
+                displayFileMessage(file.name);
             } else {
-                fileInfo.textContent = 'Error uploading file';
+                uploadStatus.textContent = `File ${file.name} upload failed.`;
             }
         })
         .catch(error => {
-            fileInfo.textContent = 'Error: ' + error;
+            uploadStatus.textContent = `Error uploading file ${file.name}: ${error}`;
         });
+}
+
+function displayFileMessage(fileName) {
+    const chatWindow = document.getElementById('chat-window');
+    const userMessageContainer = document.createElement('div');
+    userMessageContainer.className = 'message-container user';
+    const userMessage = document.createElement('div');
+    userMessage.className = 'user-message file-message';
+    const fileIcon = document.createElement('img');
+    fileIcon.src = '/static/logos/file.svg';
+    fileIcon.alt = 'File';
+    fileIcon.className = 'file-icon';
+    const fileNameElement = document.createElement('span');
+    fileNameElement.textContent = fileName;
+    userMessage.appendChild(fileIcon);
+    userMessage.appendChild(fileNameElement);
+    userMessageContainer.appendChild(userMessage);
+    chatWindow.appendChild(userMessageContainer);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 // Initialize event listeners when DOM is loaded
@@ -201,4 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sendMessage();
         }
     });
+
+    // Show the mode selection modal on page load
+    document.getElementById('mode-modal').style.display = 'flex';
 });
