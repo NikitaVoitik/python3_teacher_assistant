@@ -1,3 +1,4 @@
+from PyPDF2 import PdfReader
 from flask import Flask, render_template, request, jsonify
 
 from configfile import apikey
@@ -35,9 +36,24 @@ class MyFlaskApp:
         def file():
             file_upload = request.files['file']
             if file_upload:
-                file_content = file_upload.read().decode('utf-8')
                 filename = file_upload.filename
-                self.llm_client.add_file(filename, file_content)
+                content = ""
+
+                if filename.lower().endswith('.pdf'):
+                    try:
+                        pdf = PdfReader(file_upload)
+                        for page in pdf.pages:
+                            content += page.extract_text() + "\n"
+                        print(content)
+                    except Exception as e:
+                        return jsonify({'status': 'error', 'message': f'Error reading PDF: {str(e)}'})
+                else:
+                    try:
+                        content = file_upload.read().decode('utf-8')
+                    except UnicodeDecodeError:
+                        return jsonify({'status': 'error', 'message': 'File encoding not supported'})
+
+                self.llm_client.add_file(filename, content)
                 return jsonify({'status': 'ok'})
             return jsonify({'status': 'not ok'})
 
